@@ -257,6 +257,7 @@ class Dataset(object):
         self.image_info = []
         # Background is always the first class
         self.class_info = [{"source": "", "id": 0, "name": "BG"}]
+        self.secondary_class_info = [{"source": "", "id": 0, "name": "BG"}]
         self.source_class_ids = {}
 
     def add_class(self, source, class_id, class_name):
@@ -268,6 +269,20 @@ class Dataset(object):
                 return
         # Add the class
         self.class_info.append({
+            "source": source,
+            "id": class_id,
+            "name": class_name,
+        })
+
+    def add_secondary_class(self, source, class_id, class_name):
+        assert "." not in source, "Source name cannot contain a dot"
+        # Does the class exist already?
+        for info in self.class_info:
+            if info['source'] == source and info["id"] == class_id:
+                # source.class_id combination already available, skip
+                return
+        # Add the class
+        self.secondary_class_info.append({
             "source": source,
             "id": class_id,
             "name": class_name,
